@@ -4,32 +4,28 @@
  * @param string canvas canvas Id attribute
  */
 function SpaceInvaders(canvas) {
-	var self = this;
-	this.canvas = document.getElementById(canvas);
-	this.context = this.canvas.getContext('2d');
-	
+	// aux vars
+	var context = document.getElementById(canvas).getContext('2d');
+	var ships;
 	var aliens = []; // TODO: change it to multidimensional array
-	var currPosAliens = new Vector(0, 0);
+	var shouldShoot = true;
+	var animationFrameId = 0;
 	
+	// options
 	var numColsAliens = 8;
 	var numRowsAliens = 4;
-	
-	var shouldShoot = true;
 	var speedGenerateShoot = 1000; //in ms
 	
 	// init
 	(function() {
 		keyboard();
+		createShip();
 		createAliens();
 		setShouldShoot();
 	})();
 	
 	// methods
-	var shipCoods = Utils.getCanvasCenter(this.context);
-	shipCoods.y = 560;
-	var ships = new Ship(this.context, shipCoods);
-	
-	this.draw = function() {
+	function draw() {
 		clearScreen();
 		drawBackground();
 		
@@ -47,30 +43,30 @@ function SpaceInvaders(canvas) {
 		
 		checkBulletsCollision();
 				
-		ships.draw();
+		drawShip();
 		drawAliens();
 
 		startAnimation();
 	}
-	this.draw();
+	draw();
 	
 	function clearScreen() {
-		self.context.clearRect(0, 0, Utils.getCanvasWidth(self.context), Utils.getCanvasHeight(self.context));
+		context.clearRect(0, 0, Utils.getCanvasWidth(context), Utils.getCanvasHeight(context));
 	}
 	
 	function startAnimation() {
-		self.animationFrameId = window.requestAnimationFrame(self.draw);
+		animationFrameId = window.requestAnimationFrame(draw);
 	}
 	
 	function stopAnimation() {
-		window.cancelAnimationFrame(self.animationFrameId);
-		self.animationFrameId = 0;
+		window.cancelAnimationFrame(animationFrameId);
+		animationFrameId = 0;
 	}
 	
 	function keyboard() {
 		$(document).keydown(function(e) {
 			if(e.keyCode == KeyMap.ESC || e.keyCode == KeyMap.PAUSE) {
-				if(self.animationFrameId == 0) {
+				if(animationFrameId == 0) {
 					startAnimation();
 				} else {
 					stopAnimation();
@@ -80,11 +76,21 @@ function SpaceInvaders(canvas) {
 	}
 	
 	function drawBackground() {
-		var width = Utils.getCanvasWidth(self.context);
-		var height = Utils.getCanvasHeight(self.context);
+		var width = Utils.getCanvasWidth(context);
+		var height = Utils.getCanvasHeight(context);
 		
-		self.context.fillStyle = 'black';
-		self.context.fillRect(0, 0, width, height);
+		context.fillStyle = 'black';
+		context.fillRect(0, 0, width, height);
+	}
+	
+	function createShip() {
+		var shipCoods = Utils.getCanvasCenter(context);
+		shipCoods.y = 560;
+		ships = new Ship(context, shipCoods);
+	}
+	
+	function drawShip() {
+		ships.draw();
 	}
 	
 	function createAliens() { // TODO: remove magic numbers
@@ -95,7 +101,7 @@ function SpaceInvaders(canvas) {
 			y = i * (20 + 63);
 			for(var j = 1; j <= numColsAliens; j++) {
 				x = j * (20 + 60);
-				aliens.push(new Alien(self.context, new Vector(x, y)));
+				aliens.push(new Alien(context, new Vector(x, y)));
 			}
 		}
 	}
