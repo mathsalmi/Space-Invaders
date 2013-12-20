@@ -3,12 +3,14 @@
  * The Space Invaders game
  * @param string canvas canvas Id attribute
  */
+var salmi;
 function SpaceInvaders(canvas) {
 	var self = this;
 	this.canvas = document.getElementById(canvas);
 	this.context = this.canvas.getContext('2d');
 	
 	var aliens = [];
+	salmi = aliens; // TODO: remove
 	var currPosAliens = new Vector(0, 0);
 	
 	var numColsAliens = 8;
@@ -129,38 +131,42 @@ function SpaceInvaders(canvas) {
 	function checkBulletsCollision() {
 		var bullets = ships.getBullets();
 		
-		for(var i = 0; i < bullets.length; i++) {
-			var bullet = bullets[i];
-			var bulletPos = bullet.position();
+		for(var j = 0; j < aliens.length; j++) {
+			var alien = aliens[j];
+			var alienPos = alien.position();
+		
+			// remove hidden alien whose bombs are gone
+			if(alien.isHidden() && alien.getBombs().length <= 0) {
+				removeAlien(j);
+			}
 			
-			for(var j = 0; j < aliens.length; j++) {
-				var alien = aliens[j];
-				var alienPos = alien.position();
+			for(var i = 0; i < bullets.length; i++) {
+				var bullet = bullets[i];
+				var bulletPos = bullet.position();
 				
-				// remove hidden alien whose bombs are gone
-				if(alien.isHidden() && alien.getBombs().length <= 0) {
-					removeAlien(i, j)
-				}
-				
-				// check if bomb is on alien's perimeter
+				// check if bullet is on alien's perimeter
 				if(bulletPos.x >= alienPos.x && bulletPos.x <= (alienPos.x + 63) && bulletPos.y <= alienPos.y) {
 					if(alien.getBombs().length > 0) {
-						// 1) hide the alien who is not hidden and delete bullet;
+						// 1) hide the alien who is not hidden and delete the bullet;
 						// 2) if the alien is already hidden, let the bullet go in so it might hit another target;
 						if( ! alien.isHidden()) {
 							hideAlien(i);
 						}
 					} else {
 						// remove the alien who does not have bombs
-						removeAlien(i, j)
+						removeAlienBullet(i, j);
 					}
 				}
 			}
 		}
 		
-		function removeAlien(i, j) {
-			Utils.arrayRemove(bullets, i);
+		function removeAlien(j) {
 			Utils.arrayRemove(aliens, j);
+		}
+		
+		function removeAlienBullet(i, j) {
+			Utils.arrayRemove(bullets, i);
+			removeAlien(j);
 		}
 		
 		function hideAlien(i) {
