@@ -12,6 +12,7 @@ function SpaceInvaders(canvas) {
 	var animationFrameId = 0;
 	
 	// options
+	var bgColor = 'black';
 	var numColsAliens = 8;
 	var numRowsAliens = 4;
 	var speedGenerateShoot = 1000; //in ms
@@ -21,7 +22,7 @@ function SpaceInvaders(canvas) {
 		keyboard();
 		createShip();
 		createAliens();
-		setShouldShoot();
+		shootBombCycle();
 	})();
 	
 	// methods
@@ -79,7 +80,7 @@ function SpaceInvaders(canvas) {
 		var width = Utils.getCanvasWidth(context);
 		var height = Utils.getCanvasHeight(context);
 		
-		context.fillStyle = 'black';
+		context.fillStyle = bgColor;
 		context.fillRect(0, 0, width, height);
 	}
 	
@@ -119,7 +120,7 @@ function SpaceInvaders(canvas) {
 		}
 	}
 	
-	function setShouldShoot() {
+	function shootBombCycle() {
 		setInterval(function() {
 			shouldShoot = true;
 		}, speedGenerateShoot);
