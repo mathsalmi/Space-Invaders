@@ -3,14 +3,12 @@
  * The Space Invaders game
  * @param string canvas canvas Id attribute
  */
-var salmi;
 function SpaceInvaders(canvas) {
 	var self = this;
 	this.canvas = document.getElementById(canvas);
 	this.context = this.canvas.getContext('2d');
 	
-	var aliens = [];
-	salmi = aliens; // TODO: remove
+	var aliens = []; // TODO: change it to multidimensional array
 	var currPosAliens = new Vector(0, 0);
 	
 	var numColsAliens = 8;
@@ -89,7 +87,7 @@ function SpaceInvaders(canvas) {
 		self.context.fillRect(0, 0, width, height);
 	}
 	
-	function createAliens() {
+	function createAliens() { // TODO: remove magic numbers
 		var x = 0;
 		var y = 0;
 		
