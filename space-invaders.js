@@ -22,7 +22,7 @@ function SpaceInvaders(canvas) {
 		keyboard();
 		createShip();
 		createAliens();
-		shootBombCycle();
+		alienBombsCycle();
 	})();
 	
 	// methods
@@ -120,7 +120,7 @@ function SpaceInvaders(canvas) {
 		}
 	}
 	
-	function shootBombCycle() {
+	function alienBombsCycle() {
 		setInterval(function() {
 			shouldShoot = true;
 		}, speedGenerateShoot);
