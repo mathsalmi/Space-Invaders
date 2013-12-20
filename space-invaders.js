@@ -137,11 +137,35 @@ function SpaceInvaders(canvas) {
 				var alien = aliens[j];
 				var alienPos = alien.position();
 				
+				// remove hidden alien whose bombs are gone
+				if(alien.isHidden() && alien.getBombs().length <= 0) {
+					removeAlien(i, j)
+				}
+				
+				// check if bomb is on alien's perimeter
 				if(bulletPos.x >= alienPos.x && bulletPos.x <= (alienPos.x + 63) && bulletPos.y <= alienPos.y) {
-					Utils.arrayRemove(bullets, i);
-					Utils.arrayRemove(aliens, j);
+					if(alien.getBombs().length > 0) {
+						// 1) hide the alien who is not hidden and delete bullet;
+						// 2) if the alien is already hidden, let the bullet go in so it might hit another target;
+						if( ! alien.isHidden()) {
+							hideAlien(i);
+						}
+					} else {
+						// remove the alien who does not have bombs
+						removeAlien(i, j)
+					}
 				}
 			}
+		}
+		
+		function removeAlien(i, j) {
+			Utils.arrayRemove(bullets, i);
+			Utils.arrayRemove(aliens, j);
+		}
+		
+		function hideAlien(i) {
+			alien.hide(true);
+			Utils.arrayRemove(bullets, i);
 		}
 	}
 	
@@ -272,6 +296,7 @@ function Alien(ctx, pos) {
 	var imgHeight = 37;
 	var loaded = false;
 	var bombs = [];
+	var hide = false;
 	
 	
 	// init
@@ -286,7 +311,7 @@ function Alien(ctx, pos) {
 			createBomb();
 		}
 		
-		if(loaded) {
+		if(loaded && ! hide) {
 			ctx.drawImage(img, pos.x, pos.y);
 		}
 		
@@ -299,6 +324,14 @@ function Alien(ctx, pos) {
 	
 	this.getBombs = function() {
 		return bombs;
+	}
+
+	this.isHidden = function() {
+		return hide;
+	}
+
+	this.hide = function(value) {
+		hide = value == true ? true : false;
 	}
 	
 	function load() {
